@@ -47,6 +47,7 @@ class RegionTreeDataProvider {
         return element;
     }
     getChildren(element) {
+        console.log('[DEBUG TreeProvider] getChildren called, element:', element?.label || 'root', 'regions count:', this.regions.length);
         if (!element) {
             if (this.regions.length === 0) {
                 return Promise.resolve([]);
@@ -73,6 +74,7 @@ class RegionTreeDataProvider {
         return item;
     }
     updateRegions(regions) {
+        console.log('[DEBUG TreeProvider] updateRegions called with', regions.length, 'regions');
         this.regions = regions;
         this._onRegionsChanged.fire(regions);
         this._onDidChangeTreeData.fire();
@@ -81,6 +83,7 @@ class RegionTreeDataProvider {
         return this.regions;
     }
     refresh() {
+        console.log('[DEBUG TreeProvider] refresh called');
         this._onDidChangeTreeData.fire();
     }
 }

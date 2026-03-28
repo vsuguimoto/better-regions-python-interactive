@@ -43,6 +43,30 @@ const pythonRunner_1 = require("./pythonRunner");
 let decorationManager;
 let treeProvider;
 let updateTimeout = null;
+let lastPythonEditor = null;
+function shouldProcessEditor(editor) {
+    if (!editor) {
+        return false;
+    }
+    const uri = editor.document.uri;
+    const scheme = uri.scheme;
+    const uriStr = uri.toString();
+    const langId = editor.document.languageId;
+    console.log('[DEBUG] shouldProcessEditor - scheme:', scheme, 'langId:', langId, 'uri:', uriStr);
+    if (scheme !== 'file') {
+        console.log('[DEBUG] Ignoring non-file scheme');
+        return false;
+    }
+    if (langId !== 'python') {
+        console.log('[DEBUG] Ignoring non-python language');
+        return false;
+    }
+    if (uriStr.includes('vscode-interactive') || uriStr.includes('jupyter')) {
+        console.log('[DEBUG] Ignoring interactive window');
+        return false;
+    }
+    return true;
+}
 function activate(context) {
     decorationManager = new decorations_1.DecorationManager();
     treeProvider = new tree_provider_1.RegionTreeDataProvider();
@@ -50,17 +74,21 @@ function activate(context) {
     registerCommands(context);
     setupEventListeners(context);
     const editor = vscode.window.activeTextEditor;
-    if (editor && editor.document.languageId === 'python') {
+    if (shouldProcessEditor(editor)) {
+        lastPythonEditor = editor;
         updateRegions(editor);
     }
 }
 function registerCommands(context) {
     context.subscriptions.push(vscode.commands.registerCommand('regionExplorer.refresh', () => {
         const editor = vscode.window.activeTextEditor;
-        if (editor) {
+        if (shouldProcessEditor(editor)) {
+            lastPythonEditor = editor;
             updateRegions(editor);
         }
-        treeProvider.refresh();
+        else if (lastPythonEditor) {
+            treeProvider.refresh();
+        }
     }));
     context.subscriptions.push(vscode.commands.registerCommand('regionExplorer.runInInteractive', async (item) => {
         const editor = vscode.window.activeTextEditor;
@@ -83,7 +111,9 @@ function registerCommands(context) {
 }
 function setupEventListeners(context) {
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((editor) => {
-        if (editor && editor.document.languageId === 'python') {
+        console.log('[DEBUG] onDidChangeActiveTextEditor');
+        if (shouldProcessEditor(editor)) {
+            lastPythonEditor = editor;
             updateRegions(editor);
         }
         else {
@@ -91,15 +121,15 @@ function setupEventListeners(context) {
         }
     }));
     context.subscriptions.push(vscode.workspace.onDidChangeTextDocument((event) => {
+        console.log('[DEBUG] onDidChangeTextDocument:', event.document.languageId);
         const editor = vscode.window.activeTextEditor;
-        if (editor && event.document === editor.document && editor.document.languageId === 'python') {
+        if (shouldProcessEditor(editor)) {
             scheduleUpdate(editor);
         }
     }));
     context.subscriptions.push(vscode.workspace.onDidCloseTextDocument((document) => {
-        if (document.languageId === 'python') {
+        if (document.languageId === 'python' && document.uri.scheme === 'file') {
             decorationManager.clearDecorations();
-            treeProvider.updateRegions([]);
         }
     }));
 }

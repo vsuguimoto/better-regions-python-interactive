@@ -15,6 +15,7 @@ export class RegionTreeDataProvider implements vscode.TreeDataProvider<RegionTre
     }
     
     getChildren(element?: RegionTreeItem): Thenable<RegionTreeItem[]> {
+        console.log('[DEBUG TreeProvider] getChildren called, element:', element?.label || 'root', 'regions count:', this.regions.length);
         if (!element) {
             if (this.regions.length === 0) {
                 return Promise.resolve([]);
@@ -52,6 +53,7 @@ export class RegionTreeDataProvider implements vscode.TreeDataProvider<RegionTre
     }
     
     updateRegions(regions: Region[]) {
+        console.log('[DEBUG TreeProvider] updateRegions called with', regions.length, 'regions');
         this.regions = regions;
         this._onRegionsChanged.fire(regions);
         this._onDidChangeTreeData.fire();
@@ -62,6 +64,7 @@ export class RegionTreeDataProvider implements vscode.TreeDataProvider<RegionTre
     }
     
     refresh(): void {
+        console.log('[DEBUG TreeProvider] refresh called');
         this._onDidChangeTreeData.fire();
     }
     
