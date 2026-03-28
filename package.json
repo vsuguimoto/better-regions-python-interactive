@@ -1,8 +1,8 @@
 {
-  "name": "region-background",
-  "displayName": "Region Background",
+  "name": "better-regions-python-interactive",
+  "displayName": "Better Regions for Python Interactive",
   "version": "0.0.1",
-  "publisher": "region-background",
+  "publisher": "vsuguimoto",
   "description": "Highlights Python code regions with colored backgrounds and provides a tree view for navigation",
   "engines": {
     "vscode": "^1.74.0"
