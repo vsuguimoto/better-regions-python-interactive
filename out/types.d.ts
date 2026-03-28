@@ -13,6 +13,7 @@ export interface RegionTreeItem extends vscode.TreeItem {
 }
 export interface RegionConfig {
     enabled: boolean;
+    highlightOnlyLastRegion: boolean;
     opacity: number;
     saturation: number;
     lightness: number;

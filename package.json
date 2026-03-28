@@ -73,6 +73,11 @@
           "default": true,
           "description": "Enable or disable region background highlighting"
         },
+        "regionBackground.highlightOnlyLastRegion": {
+          "type": "boolean",
+          "default": false,
+          "description": "Only highlight the region containing the cursor"
+        },
         "regionBackground.opacity": {
           "type": "number",
           "default": 0.15,

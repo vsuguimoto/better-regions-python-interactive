@@ -40,6 +40,7 @@ const tree_provider_1 = require("./tree_provider");
 const decorations_1 = require("./decorations");
 const parser_1 = require("./parser");
 const pythonRunner_1 = require("./pythonRunner");
+const types_1 = require("./types");
 let decorationManager;
 let treeProvider;
 let updateTimeout = null;
@@ -118,6 +119,16 @@ function setupEventListeners(context) {
         }
         else {
             decorationManager.clearDecorations();
+        }
+    }));
+    context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection((event) => {
+        if (shouldProcessEditor(event.textEditor)) {
+            const config = (0, types_1.getRegionConfig)();
+            if (config.highlightOnlyLastRegion) {
+                const document = event.textEditor.document;
+                const regions = (0, parser_1.parseRegions)(document);
+                decorationManager.updateDecorations(event.textEditor, regions);
+            }
         }
     }));
     context.subscriptions.push(vscode.workspace.onDidChangeTextDocument((event) => {

@@ -56,41 +56,57 @@ class DecorationManager {
         }
         this.currentEditor = editor;
         const newKeys = new Set();
-        this.collectAndApplyDecorations(regions, config, editor, newKeys);
+        if (config.highlightOnlyLastRegion) {
+            const cursorLine = editor.selection.active.line;
+            const lastRegion = this.findRegionContainingLine(regions, cursorLine);
+            if (lastRegion) {
+                this.applyDecoration(lastRegion, config, editor, newKeys);
+            }
+        }
+        else {
+            this.collectAndApplyDecorations(regions, config, editor, newKeys);
+        }
         this.removeOldDecorations(newKeys);
+    }
+    findRegionContainingLine(regions, line) {
+        for (const region of regions) {
+            if (line >= region.startLine && line <= region.endLine) {
+                const childMatch = this.findRegionContainingLine(region.children, line);
+                return childMatch || region;
+            }
+        }
+        return null;
     }
     collectAndApplyDecorations(regions, config, editor, newKeys) {
         for (const region of regions) {
-            const colors = (0, colorGenerator_1.generateRegionColors)(region.name, region.depth, config.saturation, config.lightness, config.opacity);
-            const key = `${region.startLine}-${region.endLine}`;
-            newKeys.add(key);
-            if (!this.decorationTypes.has(key)) {
-                const decorationType = vscode.window.createTextEditorDecorationType({
-                    isWholeLine: false,
-                    light: {
-                        backgroundColor: colors.background,
-                        borderStyle: 'solid',
-                        borderWidth: '1px',
-                        borderColor: colors.border,
-                    },
-                    dark: {
-                        backgroundColor: colors.background,
-                        borderStyle: 'solid',
-                        borderWidth: '1px',
-                        borderColor: colors.border,
-                    },
-                });
-                this.decorationTypes.set(key, decorationType);
-            }
-            const startPos = new vscode.Position(region.startLine, 0);
-            const endPos = new vscode.Position(region.endLine, 0);
-            const range = new vscode.Range(startPos, endPos);
-            const decorationType = this.decorationTypes.get(key);
-            editor.setDecorations(decorationType, [{ range, hoverMessage: `Region: ${region.name}` }]);
+            this.applyDecoration(region, config, editor, newKeys);
             if (region.children.length > 0) {
                 this.collectAndApplyDecorations(region.children, config, editor, newKeys);
             }
         }
+    }
+    applyDecoration(region, config, editor, newKeys) {
+        const colors = (0, colorGenerator_1.generateRegionColors)(region.name, region.depth, config.saturation, config.lightness, config.opacity);
+        const key = `${region.startLine}-${region.endLine}`;
+        newKeys.add(key);
+        if (!this.decorationTypes.has(key)) {
+            const decorationType = vscode.window.createTextEditorDecorationType({
+                isWholeLine: true,
+                light: {
+                    backgroundColor: colors.background,
+                },
+                dark: {
+                    backgroundColor: colors.background,
+                },
+            });
+            this.decorationTypes.set(key, decorationType);
+        }
+        const startPos = new vscode.Position(region.startLine, 0);
+        const endLine = editor.document.lineAt(region.endLine);
+        const endPos = endLine.range.end;
+        const range = new vscode.Range(startPos, endPos);
+        const decorationType = this.decorationTypes.get(key);
+        editor.setDecorations(decorationType, [{ range, hoverMessage: `Region: ${region.name}` }]);
     }
     removeOldDecorations(newKeys) {
         const keysToRemove = [];

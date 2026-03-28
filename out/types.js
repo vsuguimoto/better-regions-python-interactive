@@ -39,6 +39,7 @@ function getRegionConfig() {
     const config = vscode.workspace.getConfiguration('regionBackground');
     return {
         enabled: config.get('enabled', true),
+        highlightOnlyLastRegion: config.get('highlightOnlyLastRegion', true),
         opacity: config.get('opacity', 0.15),
         saturation: config.get('saturation', 0.6),
         lightness: config.get('lightness', 0.85),

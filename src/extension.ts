@@ -3,7 +3,7 @@ import { RegionTreeDataProvider } from './tree_provider';
 import { DecorationManager } from './decorations';
 import { parseRegions } from './parser';
 import { runRegionInInteractive } from './pythonRunner';
-import { RegionTreeItem } from './types';
+import { RegionTreeItem, getRegionConfig } from './types';
 
 let decorationManager: DecorationManager;
 let treeProvider: RegionTreeDataProvider;
@@ -105,6 +105,19 @@ function setupEventListeners(context: vscode.ExtensionContext) {
                 updateRegions(editor!);
             } else {
                 decorationManager.clearDecorations();
+            }
+        })
+    );
+    
+    context.subscriptions.push(
+        vscode.window.onDidChangeTextEditorSelection((event) => {
+            if (shouldProcessEditor(event.textEditor)) {
+                const config = getRegionConfig();
+                if (config.highlightOnlyLastRegion) {
+                    const document = event.textEditor.document;
+                    const regions = parseRegions(document);
+                    decorationManager.updateDecorations(event.textEditor, regions);
+                }
             }
         })
     );
