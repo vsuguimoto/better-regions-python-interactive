@@ -4,6 +4,10 @@
   "version": "0.0.1",
   "publisher": "vsuguimoto",
   "description": "Highlights Python code regions with colored backgrounds and provides a tree view for navigation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vsuguimoto/better-regions-python-interactive.git"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
