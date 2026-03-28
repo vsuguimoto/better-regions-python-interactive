@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Compiled output
+out/
+
+# Linter cache
+.ruff_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Extension builds
+*.vsix
