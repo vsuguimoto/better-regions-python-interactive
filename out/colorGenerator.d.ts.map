@@ -1,1 +1,0 @@
-{"version":3,"file":"colorGenerator.d.ts","sourceRoot":"","sources":["../src/colorGenerator.ts"],"names":[],"mappings":"AAgCA,MAAM,WAAW,eAAe;IAC5B,UAAU,EAAE,MAAM,CAAC;IACnB,MAAM,EAAE,MAAM,CAAC;CAClB;AAED,wBAAgB,oBAAoB,CAChC,IAAI,EAAE,MAAM,EACZ,KAAK,EAAE,MAAM,EACb,UAAU,EAAE,MAAM,EAClB,aAAa,EAAE,MAAM,EACrB,OAAO,EAAE,MAAM,GAChB,eAAe,CAYjB"}
