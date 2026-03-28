@@ -1,0 +1,107 @@
+{
+  "name": "region-background",
+  "displayName": "Region Background",
+  "version": "0.0.1",
+  "publisher": "region-background",
+  "description": "Highlights Python code regions with colored backgrounds and provides a tree view for navigation",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:python",
+    "onView:regionExplorer"
+  ],
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "regionExplorer",
+          "name": "Region Explorer"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "regionExplorer.refresh",
+        "title": "Refresh Regions",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "regionExplorer.runInInteractive",
+        "title": "Run in Python Interactive",
+        "icon": "$(play)"
+      },
+      {
+        "command": "regionExplorer.revealInEditor",
+        "title": "Reveal in Editor"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "regionExplorer.refresh",
+          "when": "view == regionExplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "regionExplorer.runInInteractive",
+          "when": "view == regionExplorer && viewItem == regionItem",
+          "group": "inline"
+        },
+        {
+          "command": "regionExplorer.runInInteractive",
+          "when": "view == regionExplorer && viewItem == regionItem"
+        },
+        {
+          "command": "regionExplorer.revealInEditor",
+          "when": "view == regionExplorer && viewItem == regionItem"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Region Background",
+      "properties": {
+        "regionBackground.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable region background highlighting"
+        },
+        "regionBackground.opacity": {
+          "type": "number",
+          "default": 0.15,
+          "description": "Background opacity (0.0-1.0)"
+        },
+        "regionBackground.saturation": {
+          "type": "number",
+          "default": 0.6,
+          "description": "Color saturation (0.0-1.0)"
+        },
+        "regionBackground.lightness": {
+          "type": "number",
+          "default": 0.85,
+          "description": "Base lightness (0.0-1.0)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/mocha": "^10.0.6",
+    "@vscode/test-electron": "^2.3.8",
+    "mocha": "^10.2.0",
+    "typescript": "^5.0.0"
+  }
+}
